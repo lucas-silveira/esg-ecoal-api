@@ -104,11 +104,10 @@ describe('Goals', () => {
       const res = await ctx.request
         .put(`/api/goals/${goalRes.body.id}`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ title: 'Updated', dimension: 'environmental', completed_at: '2026-01-01T00:00:00Z' });
+        .send({ title: 'Updated', dimension: 'environmental' });
 
       expect(res.status).toBe(200);
       expect(res.body.title).toBe('Updated');
-      expect(res.body.completed_at).toBe('2026-01-01T00:00:00Z');
     });
   });
 

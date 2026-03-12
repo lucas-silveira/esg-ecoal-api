@@ -23,7 +23,6 @@ const goalSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
   dimension: z.enum(['environmental', 'social', 'governance']),
-  completed_at: z.string().nullable().optional(),
 });
 
 const taskSchema = z.object({

@@ -176,7 +176,6 @@
               "path": ["api", "goals"],
               "query": [
                 { "key": "dimension", "value": "environmental", "disabled": true },
-                { "key": "completed_at", "value": "true", "disabled": true },
                 { "key": "created_at", "value": "2026-01-01", "disabled": true }
               ]
             }
@@ -197,7 +196,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Reduce carbon emissions\",\n  \"description\": \"Updated description\",\n  \"dimension\": \"environmental\",\n  \"completed_at\": \"2026-03-11T00:00:00Z\"\n}"
+              "raw": "{\n  \"title\": \"Reduce carbon emissions\",\n  \"description\": \"Updated description\",\n  \"dimension\": \"environmental\"\n}"
             }
           }
         },

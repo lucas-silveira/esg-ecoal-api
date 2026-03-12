@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS goals (
   description TEXT,
   dimension TEXT NOT NULL CHECK (dimension IN ('environmental', 'social', 'governance')),
   company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
-  completed_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

@@ -13,9 +13,6 @@ router.get('/', (req, res) => {
     sql += ' AND dimension = ?';
     params.push(req.query.dimension);
   }
-  if (req.query.completed_at) {
-    sql += ' AND completed_at IS NOT NULL';
-  }
   if (req.query.created_at) {
     sql += ' AND created_at >= ?';
     params.push(req.query.created_at);
@@ -86,11 +83,11 @@ router.put('/:id', (req, res) => {
     return res.status(400).json({ error: result.error.flatten().fieldErrors });
   }
 
-  const { title, description, dimension, completed_at } = result.data;
+  const { title, description, dimension } = result.data;
 
   req.db.prepare(
-    "UPDATE goals SET title = ?, description = ?, dimension = ?, completed_at = ?, updated_at = datetime('now') WHERE id = ?"
-  ).run(title, description ?? null, dimension, completed_at ?? null, goal.id);
+    "UPDATE goals SET title = ?, description = ?, dimension = ?, updated_at = datetime('now') WHERE id = ?"
+  ).run(title, description ?? null, dimension, goal.id);
 
   const updated = req.db.prepare('SELECT * FROM goals WHERE id = ?').get(goal.id);
   const tasks = req.db.prepare('SELECT * FROM tasks WHERE goal_id = ?').all(goal.id);

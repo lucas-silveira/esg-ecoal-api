@@ -27,7 +27,10 @@ router.get('/dimensions', (req, res) => {
 
   for (const dim of dimensions) {
     let totalSql = 'SELECT COUNT(*) as count FROM goals WHERE company_id = ? AND dimension = ?';
-    let completedSql = 'SELECT COUNT(*) as count FROM goals WHERE company_id = ? AND dimension = ? AND completed_at IS NOT NULL';
+    let completedSql = `SELECT COUNT(*) as count FROM goals g
+      WHERE g.company_id = ? AND g.dimension = ?
+      AND EXISTS (SELECT 1 FROM tasks t WHERE t.goal_id = g.id)
+      AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.goal_id = g.id AND t.completed = 0)`;
     const params = [companyId, dim];
 
     if (dateRange) {
@@ -60,9 +63,9 @@ router.get('/score', (req, res) => {
     WHERE g.company_id = ? AND t.completed = 1
   `).get(companyId);
 
-  const score = company.global_score_goal === 0 ? 0 : row.total_score / company.global_score_goal;
+  const score_progress = company.global_score_goal === 0 ? 0 : row.total_score / company.global_score_goal;
 
-  res.json({ score, total_score: row.total_score, global_score_goal: company.global_score_goal });
+  res.json({ score_progress, total_score: row.total_score, global_score_goal: company.global_score_goal });
 });
 
 module.exports = router;

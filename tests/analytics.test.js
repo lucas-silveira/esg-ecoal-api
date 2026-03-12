@@ -33,9 +33,9 @@ describe('Analytics', () => {
         .send({ title: 'E2', dimension: 'environmental' });
 
       await ctx.request
-        .put(`/api/goals/${g1.body.id}`)
+        .post(`/api/goals/${g1.body.id}/tasks`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ title: 'E1', dimension: 'environmental', completed_at: '2026-01-01T00:00:00Z' });
+        .send({ title: 'T1', completed: true });
 
       const res = await ctx.request
         .get('/api/analytics/dimensions')
@@ -62,7 +62,7 @@ describe('Analytics', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.score).toBe(0);
+      expect(res.body.score_progress).toBe(0);
       expect(res.body.global_score_goal).toBe(100);
     });
 
@@ -91,7 +91,7 @@ describe('Analytics', () => {
         .get('/api/analytics/score')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(res.body.score).toBe(0.5);
+      expect(res.body.score_progress).toBe(0.5);
       expect(res.body.total_score).toBe(50);
     });
   });

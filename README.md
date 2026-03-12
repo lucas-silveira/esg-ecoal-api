@@ -39,7 +39,7 @@ npm run test:watch
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | /api/goals | List goals (filters: dimension, completed_at, created_at) |
+| GET | /api/goals | List goals (filters: dimension, created_at) |
 | POST | /api/goals | Create goal (max 10 per dimension per company) |
 | GET | /api/goals/:id | Get goal with tasks |
 | PUT | /api/goals/:id | Update goal |
