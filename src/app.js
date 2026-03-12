@@ -6,6 +6,7 @@ const companiesRoutes = require('./routes/companies');
 const goalsRoutes = require('./routes/goals');
 const tasksRoutes = require('./routes/tasks');
 const analyticsRoutes = require('./routes/analytics');
+const { swaggerSpec, swaggerUi } = require('./swagger');
 
 function createApp(db) {
   const app = express();
@@ -23,6 +24,8 @@ function createApp(db) {
   app.use('/api/goals', goalsRoutes);
   app.use('/api/goals/:goalId/tasks', tasksRoutes);
   app.use('/api/analytics', analyticsRoutes);
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   return app;
 }

@@ -17,6 +17,8 @@ npm test        # runs all tests
 npm run test:watch
 ```
 
+API documentation (Swagger UI) is available at `http://localhost:3000/api-docs` when the server is running.
+
 ## API Routes
 
 ### Auth (public)
@@ -61,6 +63,62 @@ npm run test:watch
 |--------|------|-------------|
 | GET | /api/analytics/dimensions | Progress per ESG dimension (?period=monthly\|quarterly\|annual) |
 | GET | /api/analytics/score | Company score (completed tasks score / global goal) |
+
+## Entity Schemas
+
+### Company
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| name | string | Company name (required) |
+| cnpj | string | Unique CNPJ identifier (required) |
+| global_score_goal | number | Target score, defaults to 100 |
+| created_at | string | ISO 8601 timestamp |
+| updated_at | string | ISO 8601 timestamp |
+
+### User
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| name | string | User name (required) |
+| email | string | Unique email address (required) |
+| password | string | Bcrypt-hashed password (required) |
+| role | string | User role (required) |
+| company_id | integer | FK → companies (cascades on delete) |
+| created_at | string | ISO 8601 timestamp |
+| updated_at | string | ISO 8601 timestamp |
+
+### Goal
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| title | string | Goal title (required) |
+| description | string | Goal description (optional) |
+| dimension | enum | `environmental`, `social`, or `governance` |
+| company_id | integer | FK → companies (cascades on delete) |
+| created_at | string | ISO 8601 timestamp |
+| updated_at | string | ISO 8601 timestamp |
+
+**Constraints:** max 10 goals per dimension per company.
+
+### Task
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| title | string | Task title (required) |
+| description | string | Task description (optional) |
+| score | number | Score value, defaults to 0 |
+| completed | integer | 0 or 1, defaults to 0 |
+| completed_at | string | ISO 8601 timestamp when completed (nullable) |
+| goal_id | integer | FK → goals (cascades on delete) |
+| created_at | string | ISO 8601 timestamp |
+| updated_at | string | ISO 8601 timestamp |
+
+**Constraints:** max 10 tasks per goal. Goal completion is derived from its tasks.
 
 ## Authentication
 
