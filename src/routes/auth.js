@@ -2,7 +2,7 @@ const { Router } = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { signUpSchema, signInSchema } = require('../validation/schemas');
-const { JWT_SECRET } = require('../middleware/auth');
+const { JWT_SECRET, authMiddleware } = require('../middleware/auth');
 
 const router = Router();
 
@@ -53,6 +53,14 @@ router.post('/sign-in', (req, res) => {
   );
 
   res.json({ token });
+});
+
+router.get('/me', authMiddleware, (req, res) => {
+  const user = req.db.prepare('SELECT id, name, email, role, company_id FROM users WHERE id = ?').get(req.user.id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.json(user);
 });
 
 module.exports = router;
