@@ -1,4 +1,5 @@
 const { createDb } = require('./db');
+const bcrypt = require('bcryptjs');
 
 const db = createDb();
 
@@ -23,6 +24,12 @@ const users = [
   { name: 'Lucas', email: 'lucas@ecoal.com', dept: 'Operações' },
   { name: 'Sandra', email: 'sandra@ecoal.com', dept: 'Logística' }
 ];
+const categories = [
+  'Reciclagem',
+  'Econ. Energia',
+  'Uso de Água',
+  'Ação Social'
+];
 
 const insertUser = db.prepare(`
   INSERT OR IGNORE INTO users (name, email, password, role, company_id, department)
@@ -31,13 +38,19 @@ const insertUser = db.prepare(`
 
 users.forEach(u => insertUser.run(u.name, u.email, passwordHash, 'employee', companyId, u.dept));
 
-db.prepare(`
-  INSERT INTO user_contributions (user_id, category, points) VALUES 
-  (1, 'Reciclagem', 45.0),
-  (1, 'Econ. Energia', 32.0),
-  (1, 'Uso de Água', 28.0),
-  (1, 'Ação Social', 15.0)
-`).run();
+const insertContribution = db.prepare(`
+  INSERT INTO user_contributions (user_id, category, points)
+  VALUES (?, ?, ?)
+`);
+
+const userRows = db.prepare(`SELECT id FROM users`).all();
+
+userRows.forEach(user => {
+  categories.forEach(category => {
+    const points = Math.floor(Math.random() * 50);
+    insertContribution.run(user.id, category, points);
+  });
+});
 
 const insertEnergy = db.prepare(`
   INSERT INTO energy_metrics (company_id, month, year, realized_value, goal_value) 
