@@ -12,6 +12,7 @@ REST API for managing ESG (Environmental, Social, Governance) goals. Built for t
 
 ```bash
 npm install
+npm run seed
 npm start       # runs on port 3000
 npm test        # runs all tests
 npm run test:watch
@@ -27,6 +28,7 @@ API documentation (Swagger UI) is available at `http://localhost:3000/api-docs` 
 |--------|------|-------------|
 | POST | /api/auth/sign-up | Register (requires existing company CNPJ) |
 | POST | /api/auth/sign-in | Login, returns JWT |
+| GET  | /api/auth/me      | Get user information |
 
 ### Companies (authenticated)
 
@@ -63,6 +65,7 @@ API documentation (Swagger UI) is available at `http://localhost:3000/api-docs` 
 |--------|------|-------------|
 | GET | /api/analytics/dimensions | Progress per ESG dimension (?period=monthly\|quarterly\|annual) |
 | GET | /api/analytics/score | Company score (completed tasks score / global goal) |
+| GET | /api/analytics/dashboard | Progress as data for dashboard exhibition |
 
 ## Entity Schemas
 
@@ -87,6 +90,7 @@ API documentation (Swagger UI) is available at `http://localhost:3000/api-docs` 
 | password | string | Bcrypt-hashed password (required) |
 | role | string | User role (required) |
 | company_id | integer | FK → companies (cascades on delete) |
+| department | string | User department on company (required) |
 | created_at | string | ISO 8601 timestamp |
 | updated_at | string | ISO 8601 timestamp |
 
@@ -119,6 +123,39 @@ API documentation (Swagger UI) is available at `http://localhost:3000/api-docs` 
 | updated_at | string | ISO 8601 timestamp |
 
 **Constraints:** max 10 tasks per goal. Goal completion is derived from its tasks.
+
+### User Contributions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| user_id | integer | FK → user (cascades on delete) |
+| category | string | Category in which user contributed (required) |
+| points | number | How many points this contribution gave |
+| created_at | string | ISO 8601 timestamp |
+
+### Energy Metrics
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| company_id | integer | FK → companies (cascades on delete) |
+| month | string | Month in which the data was collected (required) |
+| year | integer | Year in which the data was collected (required) |
+| realized_value | number | Realized value of the metric (required) |
+| goal_value | number | Value this metric has on the overall goal (required) |
+| created_at | string | ISO 8601 timestamp |
+
+### Training Metrics
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Auto-incrementing primary key |
+| company_id | integer | FK → companies (cascades on delete) |
+| quarter | string | Quarter in which the data was collected (required) |
+| year | integer | Year in which the data was collected (required) |
+| total_hours | number | How many hours did the training take (required) |
+| created_at | string | ISO 8601 timestamp |
 
 ## Authentication
 
