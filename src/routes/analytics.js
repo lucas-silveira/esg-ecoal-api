@@ -68,4 +68,54 @@ router.get('/score', (req, res) => {
   res.json({ score_progress, total_score: row.total_score, global_score_goal: company.global_score_goal });
 });
 
+router.get('/dashboard', (req, res) => {
+  const companyId = req.user.companyId;
+  const userId = req.user.id;
+
+  try {
+    const departmentsData = req.db.prepare(
+      `SELECT department, COUNT(id) as count FROM users WHERE company_id = ? AND department IS NOT NULL GROUP BY department`
+    ).all(companyId);
+
+    const contributionsData = req.db.prepare(
+      `SELECT category, SUM(points) as total_points FROM user_contributions WHERE user_id = ? GROUP BY category`
+    ).all(userId);
+
+    const energyData = req.db.prepare(
+      `SELECT month, realized_value, goal_value FROM energy_metrics WHERE company_id = ? AND year = 2025 ORDER BY id ASC`
+    ).all(companyId);
+
+    const trainingData = req.db.prepare(
+      `SELECT quarter, total_hours FROM training_metrics WHERE company_id = ? AND year = 2025 ORDER BY id ASC`
+    ).all(companyId);
+
+    res.json({
+      departmentParticipation: departmentsData.reduce((acc, curr) => {
+        acc[curr.department] = curr.count;
+        return acc;
+      }, {}),
+      
+      myContributions: {
+        labels: contributionsData.map(c => c.category),
+        values: contributionsData.map(c => c.total_points)
+      },
+      
+      energyConsumption: {
+        labels: energyData.map(e => e.month),
+        realized: energyData.map(e => e.realized_value),
+        goal: energyData.map(e => e.goal_value)
+      },
+      
+      trainingEngagement: {
+        labels: trainingData.map(t => t.quarter),
+        values: trainingData.map(t => t.total_hours)
+      }
+    });
+
+  } catch (error) {
+    console.error("Erro ao pegar os dados:", error);
+    res.status(500).json({ error: "Erro interno ao processar dados do dashboard" });
+  }
+});
+
 module.exports = router;

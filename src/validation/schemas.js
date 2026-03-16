@@ -6,6 +6,7 @@ const signUpSchema = z.object({
   password: z.string().min(6),
   role: z.string().min(1),
   cnpj: z.string().min(1),
+  department: z.string().min(1),
 });
 
 const signInSchema = z.object({

@@ -12,7 +12,7 @@ router.post('/sign-up', (req, res) => {
     return res.status(400).json({ error: result.error.flatten().fieldErrors });
   }
 
-  const { name, email, password, role, cnpj } = result.data;
+  const { name, email, password, role, cnpj, department } = result.data;
 
   const company = req.db.prepare('SELECT id FROM companies WHERE cnpj = ?').get(cnpj);
   if (!company) {
@@ -26,8 +26,8 @@ router.post('/sign-up', (req, res) => {
 
   const hash = bcrypt.hashSync(password, 10);
   const info = req.db.prepare(
-    'INSERT INTO users (name, email, password, role, company_id) VALUES (?, ?, ?, ?, ?)'
-  ).run(name, email, hash, role, company.id);
+    'INSERT INTO users (name, email, password, role, company_id, department) VALUES (?, ?, ?, ?, ?, ?)'
+  ).run(name, email, hash, role, company.id, department);
 
   const user = req.db.prepare('SELECT id, name, email, role, company_id FROM users WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json(user);

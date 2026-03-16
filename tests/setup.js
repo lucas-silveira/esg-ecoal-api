@@ -23,8 +23,8 @@ function seedCompany(db, { name = 'Test Corp', cnpj = '12345678000100', global_s
   return db.prepare('SELECT * FROM companies WHERE id = ?').get(info.lastInsertRowid);
 }
 
-async function seedUser(ctx, { name = 'Test User', email = 'test@example.com', password = 'password123', role = 'admin', cnpj = '12345678000100' } = {}) {
-  const res = await ctx.request.post('/api/auth/sign-up').send({ name, email, password, role, cnpj });
+async function seedUser(ctx, { name = 'Test User', email = 'test@example.com', password = 'password123', role = 'admin', cnpj = '12345678000100', department = 'Teste' } = {}) {
+  const res = await ctx.request.post('/api/auth/sign-up').send({ name, email, password, role, cnpj, department });
   return res.body;
 }
 
